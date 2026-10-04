@@ -1,0 +1,6 @@
+.git
+**/__pycache__
+**/.cache
+**/.venv
+SIH26059/research
+SIH26059/test_*

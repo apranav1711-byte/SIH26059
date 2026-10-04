@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const context={module:{exports:{}}};vm.runInNewContext(fs.readFileSync(__dirname+'/map_math.js','utf8'),context);
+const m=context.module.exports;
+assert.deepEqual(Array.from(m.polar(90,-90,200,200,150)),[200,200]);
+assert.deepEqual(Array.from(m.polar(0,-55,200,200,150)),[200,50]);
+assert.deepEqual(Array.from(m.interpolate([[0,0],[10,20]],.5)),[5,10]);
+assert.deepEqual(Array.from(m.interpolate([[0,0],[10,20]],1)),[10,20]);
+let p=0;for(let i=0;i<60;i++)p=m.advance(p,1000/60,1000,13);
+assert.ok(Math.abs(p-1)<1e-10,'Playback must use elapsed time, not screen refresh rate');
+assert.ok(m.advance(11.99,50,1000,13)<1,'Playback wraps within available frames');
+assert.equal(m.advance(0,50000,1000,13),.1,'Background stalls must not jump the clock');
+console.log('Map projection, interpolation and playback-clock checks passed.');
